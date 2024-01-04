@@ -8,11 +8,11 @@ float velocity_y = 0, velocity_x =0;
 int window_width = 800;
 int window_height = 800;
 
-void astroidmaker(){
+// void astroidmaker(){
     
     
     
-}
+// }
 // find the angle in degree of the mouse cursor 
 float pointer(int x, int y){
     float base = GetMouseX() - x;
