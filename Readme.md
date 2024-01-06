@@ -10,6 +10,8 @@ Making a game in C with raylib as the library
 
 ## Currently working on 
 
+- Make the code more readable by using headers files 
+- Use Makefile to compile the code instead of a single file 
 
 ## Finished 
 
