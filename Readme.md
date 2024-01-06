@@ -4,7 +4,14 @@ Making a game in C with raylib as the library
 
 ## To do list
 
-1. Add stars in background
-2. Add Asteroids in the game 
-3. Add alien ships 
-4. Add level and score counter
+- ~~ Add stars in background ~~
+- Add Asteroids in the game 
+- Add alien ships 
+- Add level and score counter
+
+## Currently working on 
+
+- Adding stars in background with random position every game
+
+## Finished 
+
