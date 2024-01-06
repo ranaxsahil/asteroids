@@ -1,6 +1,6 @@
 #include "C:/raylib/raylib/src/raylib.h"
-#include "C:/raylib/raylib/src/raymath.h"
 #include <math.h>
+#include <time.h>
 
 int x=100, y =100;
 float velocity_y = 0, velocity_x =0;
@@ -13,6 +13,33 @@ int window_height = 800;
     
     
 // }
+// int* placingstars(){
+    // int starplace[window_width/2][window_height/2];
+    // srand(time(0));
+    // for(int i =0 ; i <window_width/2; i++){
+    //     for(int j =0 ; j < window_height/2; j++){
+    //         // this rand % 2 sets the range of rand fuction to 0 to n-1 
+    //         // so here it will be 0 to 1 so i will get what i want 
+    //         starplace[i][j] = rand()%2;
+    //     }
+    // }
+//     return *starplace;
+// }
+
+void backgroundstars(int array[window_width/16][window_height/16]){
+    for(int i =0 ; i <window_width/16; i++){
+         for(int j =0 ; j < window_height/16; j++){
+            
+            if( array[i][j] == 0){
+                continue;
+            }
+            else{
+                DrawCircle(i*16  , j*16 , 1, WHITE);
+            }
+         }
+    }
+}
+
 // find the angle in degree of the mouse cursor 
 float pointer(int x, int y){
     float base = GetMouseX() - x;
@@ -36,8 +63,12 @@ struct bullets{
     
 }a[10];
 
-
-
+// it is to make all the bullet entites not to render when the the starts 
+ void stoprenderingbullets(){
+  for( int i = 0 ; i < 10 ; i++){
+        a[i].shouldrender = 0;
+    }
+}
 
 // speed of the bullet in x 
 float speedx(float angle , int speed, int x ){
@@ -65,16 +96,33 @@ float speedy(float angle , int speed, int y, int x ){
 
 
 int main(){
-    //InitWindow( GetScreenWidth() , GetScreenHeight() , "bouncing balls");
-    InitWindow( window_width, window_height , "bouncing balls" );
+    //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
+    InitWindow( window_width, window_height , "Asteroids" );
     SetTargetFPS(60);
      int p = 0, t=0;
-  
-  
+
+
+// this is to make a 2d array which divides the scrren into 2x2 grids and
+// tells wether to place a star at the edge of the grid or not 
+
+    int starplace[window_width/16][window_height/16];
+    srand(time(0));
+    for(int i =0 ; i <window_width/16; i++){
+        for(int j =0 ; j < window_height/16; j++){
+            // this rand % 2 sets the range of rand fuction to 0 to n-1 
+            // so here it will be 0 to 1 so i will get what i want 
+            
+            int a = 0;
+            a = rand()%40;
+            if ( a < 39 ){
+                starplace[i][j] = 0;
+            }else{
+            starplace[i][j] = 1;
+            }
+        }
+    }
 // it is to make all the bullet entites not to render when the the starts 
-  for( int i = 0 ; i < 10 ; i++){
-        a[i].shouldrender = 0;
-}
+    stoprenderingbullets();
     
     while( !WindowShouldClose()){
         velocity_y = velocity_y - (0.3)*IsKeyDown(KEY_W) + (0.3)*IsKeyDown(KEY_S) ;
@@ -82,6 +130,9 @@ int main(){
         y = y + velocity_y;
         x = x + velocity_x;
         BeginDrawing();
+
+
+        backgroundstars(starplace);
         
         ClearBackground( BLACK);
         if ( x < -10){
