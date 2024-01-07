@@ -8,24 +8,8 @@ float velocity_y = 0, velocity_x =0;
 int window_width = 800;
 int window_height = 800;
 
-// void astroidmaker(){
-    
-    
-    
-// }
-// int* placingstars(){
-    // int starplace[window_width/2][window_height/2];
-    // srand(time(0));
-    // for(int i =0 ; i <window_width/2; i++){
-    //     for(int j =0 ; j < window_height/2; j++){
-    //         // this rand % 2 sets the range of rand fuction to 0 to n-1 
-    //         // so here it will be 0 to 1 so i will get what i want 
-    //         starplace[i][j] = rand()%2;
-    //     }
-    // }
-//     return *starplace;
-// }
-
+// here we are gonna check the 2d array for 0/1 stored value 
+//and draw a circle(or star), at the j*16 and i*16 cordiante  
 void backgroundstars(int array[window_width/16][window_height/16]){
     for(int i =0 ; i <window_width/16; i++){
          for(int j =0 ; j < window_height/16; j++){
@@ -94,6 +78,53 @@ float speedy(float angle , int speed, int y, int x ){
 }
 
 
+// it is for the the increment and decrement of spaceship velocity 
+void velocity_of_ship(){
+    velocity_y = velocity_y - (0.3)*IsKeyDown(KEY_W) + (0.3)*IsKeyDown(KEY_S) ;
+    velocity_x = velocity_x + (0.3)*IsKeyDown(KEY_D) - (0.3)*IsKeyDown(KEY_A) ;
+    y = y + velocity_y;
+    x = x + velocity_x;
+}
+
+
+
+// it is to limt the speed of the ship in each direction x and y 
+// yes the resultant speed of x+y is more than 5 but 
+//i dont wanna work on that right now will think later 
+
+void speed_check_of_ship(){
+    if ( velocity_x >= 5){
+        velocity_x = 5;        
+    }
+    else if ( velocity_x <= -5 ){
+        velocity_x = -5;
+    }
+    if ( velocity_y >= 5){
+        velocity_y = 5;
+    }
+    else if ( velocity_y <= -5){
+        velocity_y = -5;
+    }
+}
+
+
+
+// this function just checks wether the ship has crossed the edge of the scrren and then
+// teleports ship to the opposite side 
+void teleportation_from_one_side_to_other(){
+    if ( x < -10){
+        x = 810; 
+    }
+    else if ( x > 810){
+        x = -10; 
+    }
+    if ( y <  -10){
+        y = 810;
+    }
+    else if ( y > 810){
+        y = -10;
+    }
+}
 
 int main(){
     //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
@@ -105,62 +136,31 @@ int main(){
 // this is to make a 2d array which divides the scrren into 2x2 grids and
 // tells wether to place a star at the edge of the grid or not 
 
-    int starplace[window_width/16][window_height/16];
-    srand(time(0));
-    for(int i =0 ; i <window_width/16; i++){
-        for(int j =0 ; j < window_height/16; j++){
-            // this rand % 2 sets the range of rand fuction to 0 to n-1 
-            // so here it will be 0 to 1 so i will get what i want 
-            
-            int a = 0;
-            a = rand()%40;
-            if ( a < 39 ){
-                starplace[i][j] = 0;
-            }else{
+int starplace[window_width/16][window_height/16];
+srand(time(0));
+for(int i =0 ; i <window_width/16; i++){
+    for(int j =0 ; j < window_height/16; j++){
+        int a = 0;
+        a = rand()%40;
+        if ( a < 39 ){
+            starplace[i][j] = 0;
+        }
+        else{
             starplace[i][j] = 1;
-            }
         }
     }
+}
 // it is to make all the bullet entites not to render when the the starts 
     stoprenderingbullets();
     
     while( !WindowShouldClose()){
-        velocity_y = velocity_y - (0.3)*IsKeyDown(KEY_W) + (0.3)*IsKeyDown(KEY_S) ;
-        velocity_x = velocity_x + (0.3)*IsKeyDown(KEY_D) - (0.3)*IsKeyDown(KEY_A) ;
-        y = y + velocity_y;
-        x = x + velocity_x;
+        velocity_of_ship();
         BeginDrawing();
 
-
         backgroundstars(starplace);
-        
         ClearBackground( BLACK);
-        if ( x < -10){
-            x = 810; 
-        }
-        else if ( x > 810){
-            x = -10; 
-        }
-        if ( y <  -10){
-            y = 810;
-        }
-        else if ( y > 810){
-            y = -10;
-        }
-        if ( velocity_x >= 5){
-            velocity_x = 5;
-            
-        }
-        
-        else if ( velocity_x <= -5 ){
-            velocity_x = -5;
-        }
-        if ( velocity_y >= 5){
-            velocity_y = 5;
-        }
-        else if ( velocity_y <= -5){
-            velocity_y = -5;
-        }
+        speed_check_of_ship();
+        teleportation_from_one_side_to_other();
 
 // to check if the mouse button if pressed and then make the first entity visible by setting the render function to 1
 // and giving the entity the values of x, y and the speed at which it should move 
@@ -189,20 +189,10 @@ int main(){
             DrawCircle(a[q].x,a[q].y,5,RAYWHITE);}
             
         }
-        
-        
-                  //Rectangle rec = {10,10,10,10};
-            //DrawRectangle(x , y, 10 ,10, RAYWHITE);
             DrawFPS( 20,20);
-            //float angle = (180/3.14)*atan((GetMouseY()-y)/(GetMouseX() - x));
             DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
-            //DrawRectanglePro((Rectangle){x,y,10,10},(Vector2){5,5}, angle,RAYWHITE);
-           // DrawRectangle(x , y, 10 ,10, RAYWHITE);
-           //taninverse = atan((GetMouseY() - y)/base);
-          // if ()
-            //DrawFPS( 20,20);
             EndDrawing();
-           DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\nspeedx:%010f\nspeedy:%010f", GetMouseY(), GetMouseX(), pointer(x,y), speedx(pointer(x,y),30,x), speedy(pointer(x,y),30,y,x)) , 40, 40, 20 , RAYWHITE);
+            DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\nspeedx:%010f\nspeedy:%010f", GetMouseY(), GetMouseX(), pointer(x,y), speedx(pointer(x,y),30,x), speedy(pointer(x,y),30,y,x)) , 40, 40, 20 , RAYWHITE);
     }
     
     
