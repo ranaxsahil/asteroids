@@ -8,8 +8,11 @@ float velocity_y = 0, velocity_x =0;
 int window_width = 800;
 int window_height = 800;
 
+int p = 0;
+
 // here we are gonna check the 2d array for 0/1 stored value 
-//and draw a circle(or star), at the j*16 and i*16 cordiante  
+//and draw a circle(or star), at the j*16 and i*16 cordiante
+
 void backgroundstars(int array[window_width/16][window_height/16]){
     for(int i =0 ; i <window_width/16; i++){
          for(int j =0 ; j < window_height/16; j++){
@@ -25,6 +28,7 @@ void backgroundstars(int array[window_width/16][window_height/16]){
 }
 
 // find the angle in degree of the mouse cursor 
+
 float pointer(int x, int y){
     float base = GetMouseX() - x;
     if (base == 0){
@@ -36,7 +40,8 @@ float pointer(int x, int y){
     }
 }
 
-// Made a structure for bullets to render and wether we have to render it or not  
+// Made a structure for bullets to render and wether we have to render it or not 
+
 struct bullets{
     int shouldrender;
     float angle;
@@ -45,9 +50,10 @@ struct bullets{
     float speedx;
     float speedy;
     
-}a[10];
+}a[20];
 
 // it is to make all the bullet entites not to render when the the starts 
+
  void stoprenderingbullets(){
   for( int i = 0 ; i < 10 ; i++){
         a[i].shouldrender = 0;
@@ -55,6 +61,7 @@ struct bullets{
 }
 
 // speed of the bullet in x 
+
 float speedx(float angle , int speed, int x ){
     angle = angle/57.29;
     int i =1;
@@ -65,6 +72,7 @@ float speedx(float angle , int speed, int x ){
 }
 
 // speed of the bullet in y 
+
 float speedy(float angle , int speed, int y, int x ){
     angle = angle/57.29;
     int i =1;
@@ -78,7 +86,8 @@ float speedy(float angle , int speed, int y, int x ){
 }
 
 
-// it is for the the increment and decrement of spaceship velocity 
+// it is for the the increment and decrement of spaceship velocity
+
 void velocity_of_ship(){
     velocity_y = velocity_y - (0.3)*IsKeyDown(KEY_W) + (0.3)*IsKeyDown(KEY_S) ;
     velocity_x = velocity_x + (0.3)*IsKeyDown(KEY_D) - (0.3)*IsKeyDown(KEY_A) ;
@@ -111,6 +120,8 @@ void speed_check_of_ship(){
 
 // this function just checks wether the ship has crossed the edge of the scrren and then
 // teleports ship to the opposite side 
+// *** i have to make the code independent of the screen size will look into later ***
+
 void teleportation_from_one_side_to_other(){
     if ( x < -10){
         x = 810; 
@@ -126,73 +137,89 @@ void teleportation_from_one_side_to_other(){
     }
 }
 
-int main(){
-    //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
-    InitWindow( window_width, window_height , "Asteroids" );
-    SetTargetFPS(60);
-     int p = 0, t=0;
-
-
-// this is to make a 2d array which divides the scrren into 2x2 grids and
-// tells wether to place a star at the edge of the grid or not 
-
-int starplace[window_width/16][window_height/16];
-srand(time(0));
-for(int i =0 ; i <window_width/16; i++){
-    for(int j =0 ; j < window_height/16; j++){
-        int a = 0;
-        a = rand()%40;
-        if ( a < 39 ){
-            starplace[i][j] = 0;
-        }
-        else{
-            starplace[i][j] = 1;
-        }
-    }
-}
-// it is to make all the bullet entites not to render when the the starts 
-    stoprenderingbullets();
-    
-    while( !WindowShouldClose()){
-        velocity_of_ship();
-        BeginDrawing();
-
-        backgroundstars(starplace);
-        ClearBackground( BLACK);
-        speed_check_of_ship();
-        teleportation_from_one_side_to_other();
 
 // to check if the mouse button if pressed and then make the first entity visible by setting the render function to 1
 // and giving the entity the values of x, y and the speed at which it should move 
 
-        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+void which_bullet_to_render(){
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             a[p].shouldrender = 1;
             a[p].x = x;
             a[p].y = y;
             a[p].speedx = speedx(pointer(x,y),17,x);
             a[p].speedy = speedy(pointer(x,y),17,y,x);
-            t = 1;
-            if (p == 9){ p = -1;}
+            if (p == 19){ 
+            p = -1;
+            }
             p++;
         }
-        
+}
+
 
 // for rendering the bullets , and if the should render is 0 then it will not render the entitiy and save computing power
-        
-        for (int q = 0 ; q <= 9; q++ ){
-            if (a[q].shouldrender == 0){
-                continue;
-            }
-            else {
-            a[q].x = a[q].x + a[q].speedx;
-            a[q].y = a[q].y + a[q].speedy;
-            DrawCircle(a[q].x,a[q].y,5,RAYWHITE);}
-            
+
+void rendering_bullets(){
+    for (int q = 0 ; q <= 19; q++ ){
+        if (a[q].shouldrender == 0){
+            continue;
         }
-            DrawFPS( 20,20);
-            DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
-            EndDrawing();
-            DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\nspeedx:%010f\nspeedy:%010f", GetMouseY(), GetMouseX(), pointer(x,y), speedx(pointer(x,y),30,x), speedy(pointer(x,y),30,y,x)) , 40, 40, 20 , RAYWHITE);
+        else {
+        a[q].x = a[q].x + a[q].speedx;
+        a[q].y = a[q].y + a[q].speedy;
+        DrawCircle(a[q].x,a[q].y,5,RAYWHITE);
+        }            
+    }
+}
+
+
+int main(){
+    //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
+    InitWindow( window_width, window_height , "Asteroids" );
+    SetTargetFPS(60);
+
+
+    // this is to make a 2d array which divides the scrren into 2x2 grids and
+    // tells wether to place a star at the edge of the grid or not 
+
+    int starplace[window_width/16][window_height/16];
+    srand(time(0));
+    for(int i =0 ; i <window_width/16; i++){
+        for(int j =0 ; j < window_height/16; j++){
+            int a = 0;
+            a = rand()%40;
+            if ( a < 39 ){
+                starplace[i][j] = 0;
+            }
+            else{
+                starplace[i][j] = 1;
+            }
+        }
+    }
+// it is to make all the bullet entites not to render when the the starts 
+    stoprenderingbullets();
+    
+    while( !WindowShouldClose()){
+
+        velocity_of_ship();
+
+        BeginDrawing();
+
+        backgroundstars(starplace);
+
+        ClearBackground( BLACK);
+
+        speed_check_of_ship();
+
+        teleportation_from_one_side_to_other();
+
+        which_bullet_to_render( p );
+        
+        rendering_bullets();
+
+        DrawFPS( 20,20);
+        DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
+        EndDrawing();
+        DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), p) , 40, 40, 20 , RAYWHITE);
     }
     
     
