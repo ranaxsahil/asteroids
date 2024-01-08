@@ -7,6 +7,7 @@ Making a game in C with raylib as the library
 - Add Asteroids in the game 
 - Add alien ships 
 - Add level and score counter
+- Add to save level and score and make it preventable to change easily
 
 ## Currently working on 
 
