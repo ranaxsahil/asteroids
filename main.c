@@ -23,7 +23,7 @@ void backgroundstars(int array[window_width/16][window_height/16]){
             }
             else{
                 b = rand()%200;
-                if ( b < 1799 ){
+                if ( b < 179 ){
                     DrawCircle(i*16  , j*16 ,1, WHITE);
                 }
                 else{
