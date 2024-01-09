@@ -14,6 +14,7 @@ int p = 0;
 //and draw a circle(or star), at the j*16 and i*16 cordiante
 
 void backgroundstars(int array[window_width/16][window_height/16]){
+    int b;
     for(int i =0 ; i <window_width/16; i++){
          for(int j =0 ; j < window_height/16; j++){
             
@@ -21,7 +22,13 @@ void backgroundstars(int array[window_width/16][window_height/16]){
                 continue;
             }
             else{
-                DrawCircle(i*16  , j*16 , 1, WHITE);
+                b = rand()%200;
+                if ( b < 1799 ){
+                    DrawCircle(i*16  , j*16 ,1, WHITE);
+                }
+                else{
+                    DrawPixel(i*16  , j*16 , WHITE);     
+                }
             }
          }
     }
@@ -42,7 +49,8 @@ float pointer(int x, int y){
 
 // Made a structure for bullets to render and wether we have to render it or not 
 
-struct bullets{
+struct bullets
+{
     int shouldrender;
     float angle;
     float x;
@@ -54,7 +62,7 @@ struct bullets{
 
 // it is to make all the bullet entites not to render when the the starts 
 
- void stoprenderingbullets(){
+ void stop_rendering_bullets(){
   for( int i = 0 ; i < 10 ; i++){
         a[i].shouldrender = 0;
     }
@@ -172,6 +180,19 @@ void rendering_bullets(){
 }
 
 
+struct Asteroids
+{
+    float speedx;
+    float speedy; 
+    int x;
+    int y;
+    int sides;
+    int shouldrender;
+
+}b[10];
+
+
+
 int main(){
     //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
     InitWindow( window_width, window_height , "Asteroids" );
@@ -195,8 +216,8 @@ int main(){
             }
         }
     }
-// it is to make all the bullet entites not to render when the the starts 
-    stoprenderingbullets();
+// it is to make all the bullet entites not to render when the game starts 
+    stop_rendering_bullets();
     
     while( !WindowShouldClose()){
 
