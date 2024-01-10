@@ -167,7 +167,7 @@ void which_bullet_to_render(){
 // for rendering the bullets , and if the should render is 0 then it will not render the entitiy and save computing power
 
 void rendering_bullets(){
-    for (int q = 0 ; q <= 19; q++ ){
+    for (int q = 0 ; q < 20; q++ ){
         if (a[q].shouldrender == 0){
             continue;
         }
@@ -189,7 +189,28 @@ struct Asteroids
     int sides;
     int shouldrender;
 
-}b[10];
+}b[20];
+
+void giving_values_to_asteroids(){
+    for( int i = 0 ; i <20; i++){
+        int total_speed = 1;
+        int angle;
+        angle = rand()%360;
+        b[i].x = rand()%800;
+        b[i].y = rand()%800;
+        b[i].speedx = total_speed*sin(angle);
+        b[i].speedy = total_speed*cos(angle);
+
+    }
+}
+
+void rendering_asteroids(){
+    for ( int i = 0 ; i < 20 ; i++){
+        b[i].x = b[i].x + b[i].speedx;
+        b[i].y = b[i].y + b[i].speedy;
+        DrawCircle( b[i].x , b[i].y , 20, WHITE);
+    }
+}
 
 
 
@@ -197,6 +218,7 @@ int main(){
     //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
     InitWindow( window_width, window_height , "Asteroids" );
     SetTargetFPS(60);
+    giving_values_to_asteroids();
 
 
     // this is to make a 2d array which divides the scrren into 2x2 grids and
@@ -217,7 +239,7 @@ int main(){
         }
     }
 // it is to make all the bullet entites not to render when the game starts 
-    stop_rendering_bullets();
+   // stop_rendering_bullets();
     
     while( !WindowShouldClose()){
 
@@ -236,6 +258,8 @@ int main(){
         which_bullet_to_render( p );
         
         rendering_bullets();
+
+        rendering_asteroids();
 
         DrawFPS( 20,20);
         DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
