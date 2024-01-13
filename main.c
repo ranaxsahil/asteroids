@@ -12,6 +12,7 @@ int p = 0;
 
 // here we are gonna check the 2d array for 0/1 stored value 
 //and draw a circle(or star), at the j*16 and i*16 cordiante
+// now with the b in the fucntion we make the stars twinkle
 
 void backgroundstars(int array[window_width/16][window_height/16]){
     int b;
@@ -130,7 +131,7 @@ void speed_check_of_ship(){
 // teleports ship to the opposite side 
 // *** i have to make the code independent of the screen size will look into later ***
 
-void teleportation_from_one_side_to_other(){
+void teleportation_from_one_side_to_other_ship(){
     if ( x < -10){
         x = 810; 
     }
@@ -184,16 +185,16 @@ struct Asteroids
 {
     float speedx;
     float speedy; 
-    int x;
-    int y;
-    int sides;
+    float x;
+    float y;
+    int radius;
     int shouldrender;
 
 }b[20];
 
 void giving_values_to_asteroids(){
     for( int i = 0 ; i <20; i++){
-        int total_speed = 1;
+        float total_speed = 1;
         int angle;
         angle = rand()%360;
         b[i].x = rand()%800;
@@ -206,12 +207,33 @@ void giving_values_to_asteroids(){
 
 void rendering_asteroids(){
     for ( int i = 0 ; i < 20 ; i++){
-        b[i].x = b[i].x + b[i].speedx;
-        b[i].y = b[i].y + b[i].speedy;
-        DrawCircle( b[i].x , b[i].y , 20, WHITE);
+        DrawCircleLines( b[i].x, b[i].y, 40, WHITE);
     }
 }
 
+void moving_asteroids(){
+    for ( int i = 0 ; i < 20 ; i++){
+        b[i].x = b[i].x + b[i].speedx;
+        b[i].y = b[i].y + b[i].speedy;
+    }
+}
+
+void teleportation_from_one_side_to_other_asteroids(){
+    for( int i =0 ; i < 20 ; i++){
+        if ( b[i].x < -b[i].radius ){
+            x = 810; 
+        }
+        else if ( b[i].x > window_width + b[i].radius){
+            x = -10; 
+        }
+        if ( b[i].y <  -b[i].radius){
+            y = 810;
+        }
+        else if ( b[i].y > window_height + b[i].radius){
+            y = -10;
+        }
+    }
+}
 
 
 int main(){
@@ -253,13 +275,17 @@ int main(){
 
         speed_check_of_ship();
 
-        teleportation_from_one_side_to_other();
+        teleportation_from_one_side_to_other_ship();
 
         which_bullet_to_render( p );
         
         rendering_bullets();
 
         rendering_asteroids();
+
+        moving_asteroids();
+
+        //teleportation_from_one_side_to_other_asteroids();
 
         DrawFPS( 20,20);
         DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
