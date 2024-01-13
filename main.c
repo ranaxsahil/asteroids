@@ -2,7 +2,7 @@
 #include <math.h>
 #include <time.h>
 
-int x=100, y =100;
+float x=100, y =100;
 float velocity_y = 0, velocity_x =0;
 
 int window_width = 800;
@@ -180,6 +180,13 @@ void rendering_bullets(){
     }
 }
 
+void stop_rendering_bullets_after_crossing_screen(){
+    for( int i =0 ; i < 20 ; i++){
+        if(a[i].x < -10 || a[i].x > (window_width+10) || a[i].y < -10 || a[i].y > (window_height + 10) )
+            a[i].shouldrender = 0;
+    }
+}
+
 
 struct Asteroids
 {
@@ -196,6 +203,7 @@ void giving_values_to_asteroids(){
     for( int i = 0 ; i <20; i++){
         float total_speed = 1;
         int angle;
+        b[i].radius = 40;
         angle = rand()%360;
         b[i].x = rand()%800;
         b[i].y = rand()%800;
@@ -207,7 +215,7 @@ void giving_values_to_asteroids(){
 
 void rendering_asteroids(){
     for ( int i = 0 ; i < 20 ; i++){
-        DrawCircleLines( b[i].x, b[i].y, 40, WHITE);
+        DrawCircleLines( b[i].x, b[i].y, b[i].radius, WHITE);
     }
 }
 
@@ -221,16 +229,16 @@ void moving_asteroids(){
 void teleportation_from_one_side_to_other_asteroids(){
     for( int i =0 ; i < 20 ; i++){
         if ( b[i].x < -b[i].radius ){
-            x = 810; 
+            b[i].x = (window_width + b[i].radius ) ; 
         }
         else if ( b[i].x > window_width + b[i].radius){
-            x = -10; 
+            b[i].x = (-b[i].radius) ; 
         }
         if ( b[i].y <  -b[i].radius){
-            y = 810;
+            b[i].y = (window_height + b[i].radius);
         }
         else if ( b[i].y > window_height + b[i].radius){
-            y = -10;
+            b[i].y = ( -1 * b[i].radius) ;
         }
     }
 }
@@ -277,7 +285,7 @@ int main(){
 
         teleportation_from_one_side_to_other_ship();
 
-        which_bullet_to_render( p );
+        which_bullet_to_render();
         
         rendering_bullets();
 
@@ -285,12 +293,14 @@ int main(){
 
         moving_asteroids();
 
-        //teleportation_from_one_side_to_other_asteroids();
+        teleportation_from_one_side_to_other_asteroids();
+
+        stop_rendering_bullets_after_crossing_screen();
 
         DrawFPS( 20,20);
         DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
         EndDrawing();
-        DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), p) , 40, 40, 20 , RAYWHITE);
+        DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), a[1].shouldrender) , 40, 40, 20 , RAYWHITE);
     }
     
     
