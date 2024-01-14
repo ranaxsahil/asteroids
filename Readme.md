@@ -10,11 +10,12 @@ Making a game in C with raylib as the library
 
 ## Currently working on 
 
-- Adding the Asteroids explosion and breaking
-- Make the code more readable by using headers files 
-- Use Makefile to compile the code instead of a single file 
+- Adding the Asteroids breaking into smaller asteroids 
+- Adding songs in the background
 
 ## Finished 
 
 - Added stars in background with random placement each game 
 - Added Asteroids in the game
+- Made code more readable
+- Added distroying astroid  
