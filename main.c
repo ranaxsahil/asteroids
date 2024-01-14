@@ -52,7 +52,7 @@ float pointer(int x, int y){
 
 struct bullets
 {
-    int shouldrender;
+    bool shouldrender;
     float angle;
     float x;
     float y;
@@ -195,7 +195,7 @@ struct Asteroids
     float x;
     float y;
     int radius;
-    int shouldrender;
+    bool shouldrender;
 
 }b[20];
 
@@ -203,6 +203,7 @@ void giving_values_to_asteroids(){
     for( int i = 0 ; i <20; i++){
         float total_speed = 1;
         int angle;
+        b[i].shouldrender = 1;
         b[i].radius = 40;
         angle = rand()%360;
         b[i].x = rand()%800;
@@ -215,7 +216,12 @@ void giving_values_to_asteroids(){
 
 void rendering_asteroids(){
     for ( int i = 0 ; i < 20 ; i++){
-        DrawCircleLines( b[i].x, b[i].y, b[i].radius, WHITE);
+        if( b[i].shouldrender == 0 ){
+            continue;
+        }
+        else{
+            DrawCircleLines( b[i].x, b[i].y, b[i].radius, WHITE);
+        }
     }
 }
 
@@ -239,6 +245,31 @@ void teleportation_from_one_side_to_other_asteroids(){
         }
         else if ( b[i].y > window_height + b[i].radius){
             b[i].y = ( -1 * b[i].radius) ;
+        }
+    }
+}
+
+
+bool collison_checker(float x1, float y1, int radius1 , float x2 , float y2 , int radius2){
+    if (  (radius1 + radius2) >= sqrt(( x1-x2)*( x1-x2) + (y1 -y2)*(y1 -y2))){
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+
+void bullet_asteroid_collision(){
+    for( int i = 0 ; i < 20; i++ ){
+        for( int j =0 ; j < 20 ; j++){
+            if(b[j].shouldrender == 1 && a[i].shouldrender == 1){
+                if (collison_checker(b[j].x, b[j].y, b[j].radius, a[i].x, a[i].y , 5 )){
+                    a[i].shouldrender = 0;
+                    b[j].shouldrender = 0;
+                }
+                
+            }
         }
     }
 }
@@ -288,6 +319,8 @@ int main(){
         which_bullet_to_render();
         
         rendering_bullets();
+        
+        bullet_asteroid_collision();
 
         rendering_asteroids();
 
@@ -297,10 +330,11 @@ int main(){
 
         stop_rendering_bullets_after_crossing_screen();
 
+       
         DrawFPS( 20,20);
         DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
         EndDrawing();
-        DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), a[1].shouldrender) , 40, 40, 20 , RAYWHITE);
+        DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), CheckCollisionCircles((Vector2){b[1].x, b[1].y}, b[1].radius ,(Vector2){a[1].x , a[1].y}, 5 )) , 40, 40, 20 , RAYWHITE);
     }
     
     
