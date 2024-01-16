@@ -275,12 +275,17 @@ void bullet_asteroid_collision(){
 }
 
 
+
 int main(){
     //InitWindow( GetScreenWidth() , GetScreenHeight() , "Asteroids");
     InitWindow( window_width, window_height , "Asteroids" );
     SetTargetFPS(60);
     giving_values_to_asteroids();
 
+    // the music begins here 
+    InitAudioDevice();
+    Music music = LoadMusicStream("Resources/music.mp3");
+    PlayMusicStream (music);
 
     // this is to make a 2d array which divides the scrren into 2x2 grids and
     // tells wether to place a star at the edge of the grid or not 
@@ -304,6 +309,7 @@ int main(){
     
     while( !WindowShouldClose()){
 
+        UpdateMusicStream(music);
         velocity_of_ship();
 
         BeginDrawing();
@@ -334,8 +340,11 @@ int main(){
         DrawFPS( 20,20);
         DrawRectanglePro((Rectangle){x,y,20,20},(Vector2){10,10},  pointer(x,y),RAYWHITE);
         EndDrawing();
+
         DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), CheckCollisionCircles((Vector2){b[1].x, b[1].y}, b[1].radius ,(Vector2){a[1].x , a[1].y}, 5 )) , 40, 40, 20 , RAYWHITE);
     }
+    UnloadMusicStream(music);
+    CloseAudioDevice();
     
     
 }
