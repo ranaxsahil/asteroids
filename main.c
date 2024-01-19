@@ -274,6 +274,9 @@ void bullet_asteroid_collision(){
     }
 }
 
+void asteroid_breaking(){
+    
+}
 
 
 int main(){
