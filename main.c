@@ -197,7 +197,7 @@ struct Asteroids
     int radius;
     bool shouldrender;
 
-}b[20];
+}b[60];
 
 void giving_values_to_asteroids(){
     for( int i = 0 ; i <20; i++){
@@ -215,7 +215,7 @@ void giving_values_to_asteroids(){
 }
 
 void rendering_asteroids(){
-    for ( int i = 0 ; i < 20 ; i++){
+    for ( int i = 0 ; i < 60 ; i++){
         if( b[i].shouldrender == 0 ){
             continue;
         }
@@ -224,11 +224,31 @@ void rendering_asteroids(){
         }
     }
 }
+void broken_asteroids(int i){
+    b[20 + 2*i].shouldrender = 1;
+    b[19 + 2*i].shouldrender = 1;
+    b[20 + 2*i].x = b[i].x;
+    b[20 + 2*i].y = b[i].y;
+    b[19 + 2*i].x = b[i].x;
+    b[19 + 2*i].y = b[i].y;
+    b[20 + 2*i].radius = 5;
+    b[19 + 2*i].radius = 5;
+    b[20 + 2*i].speedx = 2;
+    b[20 + 2*i].speedy = 2;
+    b[19 + 2*i].speedx = -2;
+    b[19 + 2*i].speedy = -2;
+
+}
 
 void moving_asteroids(){
-    for ( int i = 0 ; i < 20 ; i++){
+    for ( int i = 0 ; i < 60 ; i++){
+        if (b[i].shouldrender == 1){
         b[i].x = b[i].x + b[i].speedx;
         b[i].y = b[i].y + b[i].speedy;
+        }
+        else {
+            continue;
+        }
     }
 }
 
@@ -267,6 +287,7 @@ void bullet_asteroid_collision(){
                 if (collison_checker(b[j].x, b[j].y, b[j].radius, a[i].x, a[i].y , 5 )){
                     a[i].shouldrender = 0;
                     b[j].shouldrender = 0;
+                    broken_asteroids(j);
                 }
                 
             }
