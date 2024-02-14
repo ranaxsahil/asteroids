@@ -2,6 +2,8 @@
 #include <math.h>
 #include <time.h>
 
+#define noofasteroids 60
+
 float x=100, y =100;
 float velocity_y = 0, velocity_x =0;
 
@@ -9,6 +11,7 @@ int window_width = 800;
 int window_height = 800;
 
 int p = 0;
+
 
 // here we are gonna check the 2d array for 0/1 stored value 
 //and draw a circle(or star), at the j*16 and i*16 cordiante
@@ -196,14 +199,16 @@ struct Asteroids
     float y;
     int radius;
     bool shouldrender;
+    bool broken
 
-}b[60];
+}b[noofasteroids];
 
 void giving_values_to_asteroids(){
     for( int i = 0 ; i <20; i++){
         float total_speed = 1;
         int angle;
         b[i].shouldrender = 1;
+        b[i].broken = 0;
         b[i].radius = 40;
         angle = rand()%360;
         b[i].x = rand()%800;
@@ -215,7 +220,7 @@ void giving_values_to_asteroids(){
 }
 
 void rendering_asteroids(){
-    for ( int i = 0 ; i < 60 ; i++){
+    for ( int i = 0 ; i < noofasteroids ; i++){
         if( b[i].shouldrender == 0 ){
             continue;
         }
@@ -224,7 +229,10 @@ void rendering_asteroids(){
         }
     }
 }
-void broken_asteroids(int i){
+void broken_asteroids(int i){  
+    /// i have to make it more readable and-
+    /// the re allocation of memory and stop the broken asteroids to form more 
+    /// and more asteroids without ever getting finished 
     b[20 + 2*i].shouldrender = 1;
     b[19 + 2*i].shouldrender = 1;
     b[20 + 2*i].x = b[i].x;
@@ -241,7 +249,7 @@ void broken_asteroids(int i){
 }
 
 void moving_asteroids(){
-    for ( int i = 0 ; i < 60 ; i++){
+    for ( int i = 0 ; i < noofasteroids ; i++){
         if (b[i].shouldrender == 1){
         b[i].x = b[i].x + b[i].speedx;
         b[i].y = b[i].y + b[i].speedy;
@@ -253,7 +261,7 @@ void moving_asteroids(){
 }
 
 void teleportation_from_one_side_to_other_asteroids(){
-    for( int i =0 ; i < 20 ; i++){
+    for( int i =0 ; i < noofasteroids ; i++){
         if ( b[i].x < -b[i].radius ){
             b[i].x = (window_width + b[i].radius ) ; 
         }
@@ -281,13 +289,16 @@ bool collison_checker(float x1, float y1, int radius1 , float x2 , float y2 , in
 
 
 void bullet_asteroid_collision(){
-    for( int i = 0 ; i < 20; i++ ){
-        for( int j =0 ; j < 20 ; j++){
+    for( int i = 0 ; i < 20; i++ ){ // it is about bullets no of bullets
+        for( int j =0 ; j < noofasteroids ; j++){  // it is about asteroids 
             if(b[j].shouldrender == 1 && a[i].shouldrender == 1){
                 if (collison_checker(b[j].x, b[j].y, b[j].radius, a[i].x, a[i].y , 5 )){
                     a[i].shouldrender = 0;
                     b[j].shouldrender = 0;
-                    broken_asteroids(j);
+                    // if(b[j].broken == 0){
+                    //     broken_asteroids(j);  
+                    // }
+                    
                 }
                 
             }
