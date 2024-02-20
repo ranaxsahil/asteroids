@@ -3,6 +3,8 @@
 #include <time.h>
 
 #define noofasteroids 60
+int version = 0.01;
+
 
 float x=100, y =100;
 float velocity_y = 0, velocity_x =0;
@@ -199,7 +201,7 @@ struct Asteroids
     float y;
     int radius;
     bool shouldrender;
-    bool broken
+    // bool broken;
 
 }b[noofasteroids];
 
@@ -208,7 +210,7 @@ void giving_values_to_asteroids(){
         float total_speed = 1;
         int angle;
         b[i].shouldrender = 1;
-        b[i].broken = 0;
+        // b[i].broken = 0;
         b[i].radius = 40;
         angle = rand()%360;
         b[i].x = rand()%800;
@@ -295,9 +297,12 @@ void bullet_asteroid_collision(){
                 if (collison_checker(b[j].x, b[j].y, b[j].radius, a[i].x, a[i].y , 5 )){
                     a[i].shouldrender = 0;
                     b[j].shouldrender = 0;
-                    // if(b[j].broken == 0){
-                    //     broken_asteroids(j);  
-                    // }
+                    if(b[j].radius == 40){
+                        broken_asteroids(j);  
+                    }
+                    else{
+                        continue;
+                    }
                     
                 }
                 
@@ -306,8 +311,23 @@ void bullet_asteroid_collision(){
     }
 }
 
-void asteroid_breaking(){
-    
+void asteroid_ship_collision(){
+    for(int i = 0; i < noofasteroids; i++ ){
+        if (b[i].shouldrender == 0){
+            continue;
+        }
+        else if (b[i].x - x > 40 || b[i].y -y > 40){
+            continue;
+        }
+        else{
+            if (collison_checker(b[i].x, b[i].y, b[i].radius, x, y , 10 )){
+                b[i].shouldrender = 0;
+            }
+            else{
+                continue;
+            }
+        }
+    }
 }
 
 
@@ -369,6 +389,8 @@ int main(){
 
         teleportation_from_one_side_to_other_asteroids();
 
+        asteroid_ship_collision();
+
         stop_rendering_bullets_after_crossing_screen();
 
        
@@ -377,6 +399,8 @@ int main(){
         EndDrawing();
 
         DrawText( TextFormat(" y:%010i \n x:%010i \n angle:%010f\np:%i", GetMouseY(), GetMouseX(), pointer(x,y), CheckCollisionCircles((Vector2){b[1].x, b[1].y}, b[1].radius ,(Vector2){a[1].x , a[1].y}, 5 )) , 40, 40, 20 , RAYWHITE);
+        DrawText("v:0.01", 750, 780, 20, LIGHTGRAY);
+
     }
     UnloadMusicStream(music);
     CloseAudioDevice();
